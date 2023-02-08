@@ -1,19 +1,13 @@
-package com.tryden.tobuy
+package com.tryden.tobuy.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.tryden.tobuy.db.AppDatabase
+import com.tryden.tobuy.R
+import com.tryden.tobuy.database.AppDatabase
 
 class MainActivity : AppCompatActivity() {
-
-    private val db: RoomDatabase by lazy {
-        Room.databaseBuilder(
-            this,
-            AppDatabase::class.java, name = "to-buy-database"
-        ).build()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

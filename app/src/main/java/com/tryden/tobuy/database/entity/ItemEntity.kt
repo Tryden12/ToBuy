@@ -1,4 +1,4 @@
-package com.tryden.tobuy.model
+package com.tryden.tobuy.database.entity
 
 import androidx.room.Entity
 

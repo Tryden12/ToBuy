@@ -1,10 +1,10 @@
-package com.tryden.tobuy.dao
+package com.tryden.tobuy.database.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.tryden.tobuy.model.ItemEntity
+import com.tryden.tobuy.database.entity.ItemEntity
 
 
 @Dao
