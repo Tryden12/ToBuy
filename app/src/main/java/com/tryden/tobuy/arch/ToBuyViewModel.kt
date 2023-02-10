@@ -22,12 +22,16 @@ class ToBuyViewModel() : ViewModel() {
         }
     }
 
-    suspend fun insertItem(itemEntity: ItemEntity) {
-        repository.insertItem(itemEntity)
+    fun insertItem(itemEntity: ItemEntity) {
+        viewModelScope.launch {
+            repository.insertItem(itemEntity)
+        }
     }
 
-    suspend fun deleteItem(itemEntity: ItemEntity) {
-        repository.deleteItem(itemEntity)
+    fun deleteItem(itemEntity: ItemEntity) {
+        viewModelScope.launch {
+            repository.deleteItem(itemEntity)
+        }
     }
 
 }
