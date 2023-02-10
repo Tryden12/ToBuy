@@ -5,6 +5,11 @@ plugins {
 
 }
 
+// Epoxy
+kapt {
+    correctErrorTypes = true
+}
+
 android {
     namespace 'com.tryden.tobuy'
     compileSdk 33
