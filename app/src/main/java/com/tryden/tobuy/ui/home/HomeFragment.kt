@@ -63,4 +63,9 @@ class HomeFragment : BaseFragment(), ItemEntityInterface {
     override fun onBumpPriority(itemEntity: ItemEntity) {
         // todo implement me!
     }
+
+    override fun onResume() {
+        super.onResume()
+        mainActivity.hideKeyboard(requireView())
+    }
 }
