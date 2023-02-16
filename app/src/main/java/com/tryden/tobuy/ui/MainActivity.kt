@@ -9,10 +9,12 @@ import androidx.activity.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI.setupWithNavController
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.tryden.tobuy.R
 import com.tryden.tobuy.arch.ToBuyViewModel
 import com.tryden.tobuy.database.AppDatabase
@@ -33,8 +35,15 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        appBarConfiguration = AppBarConfiguration(navController.graph)
+        appBarConfiguration = AppBarConfiguration(setOf(
+            R.id.homeFragment,
+            R.id.profileFragment
+        ))
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        setupWithNavController(
+            findViewById<BottomNavigationView>(R.id.bottom_navigation), navHostFragment.navController
+        )
     }
 
     override fun onSupportNavigateUp(): Boolean {
