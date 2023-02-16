@@ -73,7 +73,7 @@ class HomeEpoxyController(
         override fun ModelItemEntityBinding.bind() {
             titleTextView.text = itemEntity.title
 
-            if (itemEntity.description == null) {
+            if (itemEntity.description == null || itemEntity.description.isEmpty()) {
                 descriptionTextView.isGone = true
             } else {
                 descriptionTextView.isVisible = true
