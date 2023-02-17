@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.navigation.fragment.navArgs
 import com.tryden.tobuy.R
@@ -42,6 +43,33 @@ class AddItemEntityFragment : BaseFragment() {
             saveItemEntityToDatabase()
         }
 
+        binding.quantitySeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val currentText = binding.titleEditText.text.toString().trim()
+                if (currentText.isEmpty()) {
+                    return
+                } else {
+                    val startIndex = currentText.indexOf("[") - 1
+                    val newText = if (startIndex > 0) {
+                        "${currentText.substring(0, startIndex)} [$progress]"
+                    } else {
+                        "$currentText [$progress]"
+                    }
+                    val sanitizedText = newText.replace(" [1]", "")
+                    binding.titleEditText.setText(sanitizedText)
+                    binding.titleEditText.setSelection(sanitizedText.length)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                // nothing to do
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                // nothing to do
+            }
+        })
+
         sharedViewModel.transactionCompleteLiveData.observe(viewLifecycleOwner) { complete ->
             if (complete) {
 
@@ -77,6 +105,17 @@ class AddItemEntityFragment : BaseFragment() {
 
             binding.saveButton.text = "Update"
             mainActivity.supportActionBar?.title = "Edit item"
+
+            if (itemEntity.title.contains("[")) {
+                val startIndex = itemEntity.title.indexOf("[") + 1
+                val endIndex = itemEntity.title.indexOf("]")
+                try {
+                    val progress = itemEntity.title.substring(startIndex, endIndex).toInt()
+                    binding.quantitySeekBar.progress = progress
+                } catch (e: Exception) {
+                    // whoops
+                }
+            }
         }
     }
 
