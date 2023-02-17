@@ -4,7 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tryden.tobuy.database.AppDatabase
+import com.tryden.tobuy.database.entity.CategoryEntity
 import com.tryden.tobuy.database.entity.ItemEntity
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ToBuyViewModel() : ViewModel() {
@@ -12,6 +14,7 @@ class ToBuyViewModel() : ViewModel() {
     private lateinit var repository: ToBuyRepository
 
     val itemEntitiesLiveData = MutableLiveData<List<ItemEntity>>()
+    val categoryEntitiesLiveData = MutableLiveData<List<CategoryEntity>>()
 
     val transactionCompleteLiveData = MutableLiveData<Boolean>()
 
@@ -19,12 +22,19 @@ class ToBuyViewModel() : ViewModel() {
         repository = ToBuyRepository(appDatabase)
 
         viewModelScope.launch {
-            val items = repository.getAllItems().collect { items ->
+            repository.getAllItems().collect { items ->
                 itemEntitiesLiveData.postValue(items)
+            }
+        }
+
+        viewModelScope.launch {
+            repository.getAllCategories().collect { categories ->
+                categoryEntitiesLiveData.postValue(categories)
             }
         }
     }
 
+    // region ItemEntity
     fun insertItem(itemEntity: ItemEntity) {
         viewModelScope.launch {
             repository.insertItem(itemEntity)
@@ -46,5 +56,31 @@ class ToBuyViewModel() : ViewModel() {
             transactionCompleteLiveData.postValue(true)
         }
     }
+    // endregion ItemEntity
+
+    // region CategoryEntity
+    fun insertCategory(categoryEntity: CategoryEntity) {
+        viewModelScope.launch {
+            repository.insertCategory(categoryEntity)
+
+            transactionCompleteLiveData.postValue(true)
+        }
+    }
+
+    fun deleteCategory(categoryEntity: CategoryEntity) {
+        viewModelScope.launch {
+            repository.deleteCategory(categoryEntity)
+        }
+    }
+
+    fun updateCategory(categoryEntity: CategoryEntity) {
+        viewModelScope.launch {
+            repository.updateCategory(categoryEntity)
+
+            transactionCompleteLiveData.postValue(true)
+        }
+    }
+    // endregion ItemEntity
+
 
 }

@@ -161,7 +161,6 @@ class AddItemEntityFragment : BaseFragment() {
 
     override fun onPause() {
         super.onPause()
-
         sharedViewModel.transactionCompleteLiveData.postValue(false)
     }
 
