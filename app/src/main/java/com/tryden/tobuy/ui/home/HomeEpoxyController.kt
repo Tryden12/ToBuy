@@ -8,6 +8,7 @@ import com.airbnb.epoxy.EpoxyController
 import com.tryden.tobuy.R
 import com.tryden.tobuy.addHeaderModel
 import com.tryden.tobuy.database.entity.ItemEntity
+import com.tryden.tobuy.database.entity.ItemWIthCategoryEntity
 import com.tryden.tobuy.databinding.ModelEmptyStateBinding
 import com.tryden.tobuy.databinding.ModelHeaderItemBinding
 import com.tryden.tobuy.databinding.ModelItemEntityBinding
@@ -27,7 +28,7 @@ class HomeEpoxyController(
             }
         }
 
-    var itemEntityList = ArrayList<ItemEntity>()
+    var items: List<ItemWIthCategoryEntity> = emptyList()
         set(value) {
             field = value
             isLoading = false
@@ -41,20 +42,20 @@ class HomeEpoxyController(
             return
         }
 
-        if (itemEntityList.isEmpty()) {
+        if (items.isEmpty()) {
             EmptyStateEpoxyModel().id("empty-state").addTo(this)
             return
         }
 
         var currentPriority: Int = -1
-        itemEntityList.sortedByDescending {
-            it.priority
+        items.sortedByDescending {
+            it.itemEntity.priority
         }.forEach { item ->
-            if (item.priority != currentPriority) {
-                currentPriority = item.priority
+            if (item.itemEntity.priority != currentPriority) {
+                currentPriority = item.itemEntity.priority
                 addHeaderModel(getHeaderTextForPriority(currentPriority))
             }
-            ItemEntityEpoxyModel(item, itemEntityInterface).id(item.id).addTo(this)
+            ItemEntityEpoxyModel(item, itemEntityInterface).id(item.itemEntity.id).addTo(this)
         }
     }
 
@@ -67,26 +68,26 @@ class HomeEpoxyController(
     }
 
     data class ItemEntityEpoxyModel(
-        val itemEntity: ItemEntity,
+        val itemEntity: ItemWIthCategoryEntity,
         val itemEntityInterface: ItemEntityInterface
     ): ViewBindingKotlinModel<ModelItemEntityBinding>(R.layout.model_item_entity) {
 
         override fun ModelItemEntityBinding.bind() {
-            titleTextView.text = itemEntity.title
+            titleTextView.text = itemEntity.itemEntity.title
 
-            if (itemEntity.description == null || itemEntity.description.isEmpty()) {
+            if (itemEntity.itemEntity.description == null || itemEntity.itemEntity.description.isEmpty()) {
                 descriptionTextView.isGone = true
             } else {
                 descriptionTextView.isVisible = true
-                descriptionTextView.text = itemEntity.description
+                descriptionTextView.text = itemEntity.itemEntity.description
             }
 
             priorityTextView.setOnClickListener {
-                itemEntityInterface.onBumpPriority(itemEntity)
+                itemEntityInterface.onBumpPriority(itemEntity.itemEntity)
             }
 
 
-            val colorRes = when (itemEntity.priority) {
+            val colorRes = when (itemEntity.itemEntity.priority) {
                 1 -> android.R.color.holo_green_dark
                 2 -> android.R.color.holo_orange_dark
                 3 -> android.R.color.holo_red_dark
@@ -98,7 +99,7 @@ class HomeEpoxyController(
             root.setStrokeColor(ColorStateList.valueOf(color))
 
             root.setOnClickListener {
-                itemEntityInterface.onItemSelected(itemEntity)
+                itemEntityInterface.onItemSelected(itemEntity.itemEntity)
             }
         }
     }

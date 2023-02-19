@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.airbnb.epoxy.EpoxyTouchHelper
 import com.tryden.tobuy.R
 import com.tryden.tobuy.database.entity.ItemEntity
+import com.tryden.tobuy.database.entity.ItemWIthCategoryEntity
 import com.tryden.tobuy.databinding.FragmentHomeBinding
 import com.tryden.tobuy.ui.BaseFragment
 
@@ -36,8 +37,8 @@ class HomeFragment : BaseFragment(), ItemEntityInterface {
         val controller = HomeEpoxyController(this)
         binding.epoxyRecyclerView.setController(controller)
 
-        sharedViewModel.itemEntitiesLiveData.observe(viewLifecycleOwner) { itemEntityList ->
-            controller.itemEntityList = itemEntityList as ArrayList<ItemEntity>
+        sharedViewModel.itemWithCategoryEntitiesLiveData.observe(viewLifecycleOwner) { items ->
+            controller.items = items
         }
         swipeToDelete()
     }
@@ -55,7 +56,7 @@ class HomeFragment : BaseFragment(), ItemEntityInterface {
                     direction: Int,
                 ) {
                     val itemThatWasRemoved = model?.itemEntity ?: return
-                    sharedViewModel.deleteItem(itemThatWasRemoved)
+                    sharedViewModel.deleteItem(itemThatWasRemoved.itemEntity)
                 }
             })
     }

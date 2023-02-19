@@ -3,6 +3,7 @@ package com.tryden.tobuy.arch
 import com.tryden.tobuy.database.AppDatabase
 import com.tryden.tobuy.database.entity.CategoryEntity
 import com.tryden.tobuy.database.entity.ItemEntity
+import com.tryden.tobuy.database.entity.ItemWIthCategoryEntity
 import kotlinx.coroutines.flow.Flow
 
 class ToBuyRepository(
@@ -24,6 +25,10 @@ class ToBuyRepository(
 
     fun getAllItems(): Flow<List<ItemEntity>> {
         return appDatabase.itemEntityDao().getAllItemEntities()
+    }
+
+    fun getAllItemWithCategoryEntities(): Flow<List<ItemWIthCategoryEntity>> {
+        return appDatabase.itemEntityDao().getAllItemWithCategoryEntities()
     }
     // endregion ItemEntity
 

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.tryden.tobuy.database.AppDatabase
 import com.tryden.tobuy.database.entity.CategoryEntity
 import com.tryden.tobuy.database.entity.ItemEntity
+import com.tryden.tobuy.database.entity.ItemWIthCategoryEntity
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -14,6 +15,8 @@ class ToBuyViewModel() : ViewModel() {
     private lateinit var repository: ToBuyRepository
 
     val itemEntitiesLiveData = MutableLiveData<List<ItemEntity>>()
+    val itemWithCategoryEntitiesLiveData = MutableLiveData<List<ItemWIthCategoryEntity>>()
+
     val categoryEntitiesLiveData = MutableLiveData<List<CategoryEntity>>()
 
     val transactionCompleteLiveData = MutableLiveData<Event<Boolean>>()
@@ -24,6 +27,12 @@ class ToBuyViewModel() : ViewModel() {
         viewModelScope.launch {
             repository.getAllItems().collect { items ->
                 itemEntitiesLiveData.postValue(items)
+            }
+        }
+
+        viewModelScope.launch {
+            repository.getAllItemWithCategoryEntities().collect { items ->
+                itemWithCategoryEntitiesLiveData.postValue(items)
             }
         }
 
