@@ -1,4 +1,4 @@
-package com.tryden.tobuy.ui
+package com.tryden.tobuy.ui.add
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.tryden.tobuy.database.entity.CategoryEntity
 import com.tryden.tobuy.databinding.FragmentAddCategoryBinding
+import com.tryden.tobuy.ui.BaseFragment
 import java.util.UUID
 
 class AddCategoryFragment : BaseFragment() {

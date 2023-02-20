@@ -9,6 +9,7 @@ import android.widget.SeekBar
 import android.widget.Toast
 import androidx.navigation.fragment.navArgs
 import com.tryden.tobuy.R
+import com.tryden.tobuy.database.entity.CategoryEntity
 import com.tryden.tobuy.database.entity.ItemEntity
 import com.tryden.tobuy.databinding.FragmentAddItemEntityBinding
 import com.tryden.tobuy.ui.BaseFragment
@@ -116,6 +117,15 @@ class AddItemEntityFragment : BaseFragment() {
                 }
             }
         }
+
+        val categoriesViewStateEpoxyController = CategoryViewStateEpoxyController { categoryId ->
+            sharedViewModel.onCategorySelected(categoryId)
+        }
+        binding.categoriesEpoxyController.setController(categoriesViewStateEpoxyController)
+        sharedViewModel.onCategorySelected(selectedItemEntity?.categoryId ?: CategoryEntity.DEFAULT_CATEGORY_ID)
+        sharedViewModel.categoriesViewStateLiveData.observe(viewLifecycleOwner) { viewState ->
+            categoriesViewStateEpoxyController.viewState = viewState
+        }
     }
 
     private fun saveItemEntityToDatabase() {
@@ -135,11 +145,14 @@ class AddItemEntityFragment : BaseFragment() {
             else -> 0
         }
 
+        val itemCategoryId = sharedViewModel.categoriesViewStateLiveData.value?.getSelectedCategoryId() ?: return
+
         if (isInEditMode) {
             val itemEntity = selectedItemEntity!!.copy(
                 title = itemTitle,
                 description = itemDescription,
-                priority = itemPriority
+                priority = itemPriority,
+                categoryId = itemCategoryId
             )
 
             sharedViewModel.updateItem(itemEntity)
@@ -152,7 +165,7 @@ class AddItemEntityFragment : BaseFragment() {
             description = itemDescription,
             priority = itemPriority,
             createdAt = System.currentTimeMillis(),
-            categoryId = "" // todo update this later when we have categories in the app!
+            categoryId = itemCategoryId
         )
 
         sharedViewModel.insertItem(itemEntity)

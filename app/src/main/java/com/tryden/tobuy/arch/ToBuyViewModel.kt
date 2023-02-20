@@ -1,5 +1,6 @@
 package com.tryden.tobuy.arch
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,6 +22,10 @@ class ToBuyViewModel() : ViewModel() {
 
     val transactionCompleteLiveData = MutableLiveData<Event<Boolean>>()
 
+    private val _categoriesViewStateLiveData = MutableLiveData<CategoriesViewState>()
+    val categoriesViewStateLiveData: LiveData<CategoriesViewState>
+        get() = _categoriesViewStateLiveData
+
     fun init(appDatabase: AppDatabase) {
         repository = ToBuyRepository(appDatabase)
 
@@ -40,6 +45,47 @@ class ToBuyViewModel() : ViewModel() {
             repository.getAllCategories().collect { categories ->
                 categoryEntitiesLiveData.postValue(categories)
             }
+        }
+    }
+
+    fun onCategorySelected(categoryId: String, showLoading: Boolean = false) {
+        if(showLoading) {
+            val loadingViewState = CategoriesViewState(isLoading = true)
+            _categoriesViewStateLiveData.value = loadingViewState
+        }
+
+        val categories = categoryEntitiesLiveData.value ?: return
+        val viewStateItemList = ArrayList<CategoriesViewState.Item>()
+
+        // Default category (un-selecting a category)
+        viewStateItemList.add(CategoriesViewState.Item(
+            categoryEntity = CategoryEntity.getDefaultCategory(),
+            isSelected = categoryId == CategoryEntity.DEFAULT_CATEGORY_ID
+        ))
+
+        // Populate the rest of the list with what we have in the DB
+        categories.forEach {
+            viewStateItemList.add(CategoriesViewState.Item(
+                categoryEntity = it,
+                isSelected = it.id == categoryId
+            ))
+        }
+
+        val viewState = CategoriesViewState(itemList = viewStateItemList)
+        _categoriesViewStateLiveData.postValue(viewState)
+    }
+
+    data class CategoriesViewState(
+        val isLoading: Boolean = false,
+        val itemList: List<Item> = emptyList()
+    ) {
+        data class Item(
+            val categoryEntity: CategoryEntity = CategoryEntity(),
+            val isSelected: Boolean = false
+        )
+
+        fun getSelectedCategoryId(): String {
+            return itemList.find { it.isSelected }?.categoryEntity?.id ?: CategoryEntity.DEFAULT_CATEGORY_ID
         }
     }
 

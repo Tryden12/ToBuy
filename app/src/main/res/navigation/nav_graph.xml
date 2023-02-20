@@ -39,7 +39,7 @@
     </fragment>
     <fragment
         android:id="@+id/addCategoryFragment"
-        android:name="com.tryden.tobuy.ui.AddCategoryFragment"
+        android:name="com.tryden.tobuy.ui.add.AddCategoryFragment"
         android:label="Add Category"
         tools:layout="@layout/fragment_add_category">
         <argument

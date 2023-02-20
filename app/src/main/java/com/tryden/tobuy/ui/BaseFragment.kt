@@ -1,8 +1,10 @@
 package com.tryden.tobuy.ui
 
+import androidx.annotation.ColorInt
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavDirections
+import com.google.android.material.color.MaterialColors
 import com.tryden.tobuy.arch.ToBuyViewModel
 import com.tryden.tobuy.database.AppDatabase
 
