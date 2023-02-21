@@ -7,6 +7,7 @@ import androidx.core.view.isVisible
 import com.airbnb.epoxy.EpoxyController
 import com.tryden.tobuy.R
 import com.tryden.tobuy.addHeaderModel
+import com.tryden.tobuy.arch.ToBuyViewModel
 import com.tryden.tobuy.database.entity.ItemEntity
 import com.tryden.tobuy.database.entity.ItemWIthCategoryEntity
 import com.tryden.tobuy.databinding.ModelEmptyStateBinding
@@ -20,50 +21,35 @@ class HomeEpoxyController(
     private val itemEntityInterface: ItemEntityInterface
 ): EpoxyController() {
 
-    var isLoading: Boolean = true
+   var viewState: ToBuyViewModel.HomeViewState = ToBuyViewModel.HomeViewState(isLoading = true)
         set(value) {
             field = value
-            if (field) {
-                requestModelBuild()
-            }
-        }
-
-    var items: List<ItemWIthCategoryEntity> = emptyList()
-        set(value) {
-            field = value
-            isLoading = false
             requestModelBuild()
         }
 
 
     override fun buildModels() {
-        if (isLoading) {
+        if (viewState.isLoading) {
             LoadingEpoxyModel().id("loading").addTo(this)
             return
         }
 
-        if (items.isEmpty()) {
+        if (viewState.dataList.isEmpty()) {
             EmptyStateEpoxyModel().id("empty-state").addTo(this)
             return
         }
 
-        var currentPriority: Int = -1
-        items.sortedByDescending {
-            it.itemEntity.priority
-        }.forEach { item ->
-            if (item.itemEntity.priority != currentPriority) {
-                currentPriority = item.itemEntity.priority
-                addHeaderModel(getHeaderTextForPriority(currentPriority))
-            }
-            ItemEntityEpoxyModel(item, itemEntityInterface).id(item.itemEntity.id).addTo(this)
-        }
-    }
 
-    private fun getHeaderTextForPriority(priority: Int) : String {
-        return when (priority) {
-            1 -> "Low"
-            2 -> "Medium"
-            else -> "High"
+        viewState.dataList.forEach { dataItem ->
+            if (dataItem.isHeader) {
+                addHeaderModel(dataItem.data as String)
+                return@forEach
+            }
+
+            val itemWithCategoryEntity = dataItem.data as ItemWIthCategoryEntity
+            ItemEntityEpoxyModel(itemWithCategoryEntity, itemEntityInterface)
+                .id(itemWithCategoryEntity.itemEntity.id)
+                .addTo(this)
         }
     }
 
