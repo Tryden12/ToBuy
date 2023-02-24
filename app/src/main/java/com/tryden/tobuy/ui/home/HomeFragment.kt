@@ -1,22 +1,26 @@
 package com.tryden.tobuy.ui.home
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.airbnb.epoxy.EpoxyTouchHelper
 import com.tryden.tobuy.R
 import com.tryden.tobuy.database.entity.ItemEntity
 import com.tryden.tobuy.database.entity.ItemWIthCategoryEntity
 import com.tryden.tobuy.databinding.FragmentHomeBinding
 import com.tryden.tobuy.ui.BaseFragment
+import com.tryden.tobuy.ui.home.bottomsheet.SortOrderBottomSheetDialogFragment
 
 
 class HomeFragment : BaseFragment(), ItemEntityInterface {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,6 +43,10 @@ class HomeFragment : BaseFragment(), ItemEntityInterface {
 
         sharedViewModel.homeViewStateLiveData.observe(viewLifecycleOwner) { viewState ->
             controller.viewState = viewState
+
+            binding.epoxyRecyclerView.postDelayed({
+                binding.epoxyRecyclerView.smoothScrollToPosition(0)
+            }, 1_000L)
         }
         swipeToDelete()
     }
@@ -59,6 +67,19 @@ class HomeFragment : BaseFragment(), ItemEntityInterface {
                     sharedViewModel.deleteItem(itemThatWasRemoved.itemEntity)
                 }
             })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_home_fragment, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return if (item.itemId == R.id.menuItemSort) {
+            SortOrderBottomSheetDialogFragment().show(childFragmentManager, null)
+            true
+        } else {
+            super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onBumpPriority(itemEntity: ItemEntity) {
